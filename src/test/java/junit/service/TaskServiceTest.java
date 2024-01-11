@@ -140,11 +140,10 @@ public class TaskServiceTest {
     public void testSetTaskDeadline() {
         Task existingTask = simpleTask;
         Date deadline = new Date();
-
         when(taskRepository.findById(1L)).thenReturn(Optional.of(existingTask));
         when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Task updatedTask = taskService.setTaskDeadline(1L, deadline);
+        Task updatedTask = taskService.setTaskDeadline(1L, Task.builder().deadline(deadline).build());
 
         assertNotNull(updatedTask);
         assertEquals(deadline, updatedTask.getDeadline());

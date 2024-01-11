@@ -60,13 +60,18 @@ public class TaskService {
         return taskRepository.findAll().stream().sorted((Comparator.comparing(Task::getPriority))).collect(Collectors.toList());
     }
     public List<Task> getTasksByCompletedAndPriority(Boolean completed, Priority priority){
+        if(completed!=null&&priority!=null){
         return taskRepository.findByCompletedAndPriority(completed, priority);
+        } else if (completed!=null) {
+        return taskRepository.findByCompleted(completed);
+        }
+        return taskRepository.findByPriority(priority);
     }
-    public Task setTaskDeadline(Long taskId, Date deadline) {
+    public Task setTaskDeadline(Long taskId, Task updateTask) {
         Optional<Task> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isPresent()) {
             Task task = taskOptional.get();
-            task.setDeadline(deadline);
+            task.setDeadline(updateTask.getDeadline());
             return taskRepository.save(task);
         }
         return null;
@@ -77,8 +82,8 @@ public class TaskService {
         return taskOptional.map(Task::getDeadline).orElse(null);
     }
 
-    public List<Task> getTasksWithDeadlineBefore(Date deadline) {
-        return taskRepository.findByDeadlineBefore(deadline);
+    public List<Task> getTasksWithDeadlineBefore(Task taskWithDeadline) {
+        return taskRepository.findByDeadlineBefore(taskWithDeadline.getDeadline());
     }
 
 }

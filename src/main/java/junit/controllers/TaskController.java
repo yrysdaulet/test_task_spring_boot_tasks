@@ -54,7 +54,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @Valid @RequestBody Task updatedTask) {
+    public ResponseEntity<Task> updateTask(@PathVariable Long taskId,  @RequestBody Task updatedTask) {
         Optional<Task> existingTaskOptional = taskService.getTaskById(taskId);
 
         if (existingTaskOptional.isPresent()) {
@@ -72,10 +72,10 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    public ResponseEntity<String> deleteTask(@PathVariable Long taskId) {
         if (taskService.existsTaskById(taskId)) {
             taskService.deleteTask(taskId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Task deleted",HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -102,8 +102,8 @@ public class TaskController {
     @PostMapping("/{taskId}/set-deadline")
     public ResponseEntity<Task> setTaskDeadline(
             @PathVariable Long taskId,
-            @RequestParam @Valid Date deadline) {
-        Task taskWithDeadline = taskService.setTaskDeadline(taskId, deadline);
+            @RequestBody Task updatedTask) {
+        Task taskWithDeadline = taskService.setTaskDeadline(taskId, updatedTask);
         if (taskWithDeadline != null) {
             return new ResponseEntity<>(taskWithDeadline, HttpStatus.OK);
         } else {
@@ -122,8 +122,8 @@ public class TaskController {
     }
 
     @GetMapping("/tasks-with-deadline-before")
-    public ResponseEntity<List<Task>> getTasksWithDeadlineBefore(@RequestParam @Valid Date deadline) {
-        List<Task> tasks = taskService.getTasksWithDeadlineBefore(deadline);
+    public ResponseEntity<List<Task>> getTasksWithDeadlineBefore(@RequestBody Task taskWithDeadline) {
+        List<Task> tasks = taskService.getTasksWithDeadlineBefore(taskWithDeadline);
         return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 

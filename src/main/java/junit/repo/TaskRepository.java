@@ -12,6 +12,8 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByCompletedAndPriority(boolean completed, Priority priority);
+    List<Task> findByCompleted(boolean completed);
+    List<Task> findByPriority(Priority priority);
 
     List<Task> findByDeadlineBefore(Date deadline);
 }
